@@ -51,6 +51,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PriceDTO'
+        400:
+          description: Invalid input
+        404:
+          description: Price not found
 components:
   schemas:
     PriceDTO:
