@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.*;
 
 @Service
-public class PriceApiDelegateImpl implements PriceApiDelegate  {
+public class PriceApiDelegateImpl implements PriceApiDelegate {
 
     Logger logger = LoggerFactory.getLogger(PriceApiDelegateImpl.class);
 
@@ -25,22 +25,23 @@ public class PriceApiDelegateImpl implements PriceApiDelegate  {
     public ResponseEntity<PriceDTO> getLastPrice(OffsetDateTime date,
                                                  Integer productId,
                                                  Integer brandId) {
-        try{
+        try {
             Price priceEntity = priceService.findLastPrice(date, Long.valueOf(productId), Long.valueOf(brandId));
             PriceDTO priceDTO = convertEntityToDTO(priceEntity);
-            if(priceDTO==null) {
+            if (priceDTO == null) {
                 logger.info(Constants.NOT_FOUND_MESSAGE);
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
             return ResponseEntity.ok(priceDTO);
         } catch (Exception ex) {
             logger.error("exception: " + ex.getMessage());
-            return (ResponseEntity<PriceDTO>) ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
     private PriceDTO convertEntityToDTO(Price price) {
         PriceDTO priceDTO = null;
-        if(price!=null) {
+        if (price != null) {
             priceDTO = new PriceDTO();
             priceDTO.setProductId((int) price.getProductId());
             priceDTO.setBrandId((int) price.getBrandId());
