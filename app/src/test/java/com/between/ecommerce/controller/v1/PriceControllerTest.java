@@ -100,4 +100,21 @@ public class PriceControllerTest {
                 .andExpect(jsonPath("$.final_price").value(38.95d));
     }
 
+    @Test
+    public void notFound() throws Exception { //Test 5: petición a las 21:00 del día 16 del producto 35455   para la brand 1 (ZARA)
+        String date = "2020-06-16T21:00:00.00Z";
+        String productId = "35451";
+        String brandId = "1";
+        mvc.perform(MockMvcRequestBuilders.get("/price/").accept(MediaType.APPLICATION_JSON).param("date", date).param("product_id",productId).param("brand_id",brandId))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void badRequest() throws Exception { //Test 5: petición a las 21:00 del día 16 del producto 35455   para la brand 1 (ZARA)
+        String date = "2020-06-16T21:00:00.00Z";
+        String productId = "35451";
+        mvc.perform(MockMvcRequestBuilders.get("/price/").accept(MediaType.APPLICATION_JSON).param("date", date).param("product_id",productId))
+                .andExpect(status().isBadRequest());
+    }
+
 }

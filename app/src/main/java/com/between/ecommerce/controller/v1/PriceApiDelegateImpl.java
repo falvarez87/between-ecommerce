@@ -3,8 +3,9 @@ package com.between.ecommerce.controller.v1;
 import com.between.ecommerce.constants.Constants;
 import com.between.ecommerce.dto.v1.PriceDTO;
 import com.between.ecommerce.entity.Price;
-import com.between.ecommerce.exception.PriceNotFoundException;
 import com.between.ecommerce.service.IPriceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,9 @@ import java.time.*;
 
 @Service
 public class PriceApiDelegateImpl implements PriceApiDelegate  {
+
+    Logger logger = LoggerFactory.getLogger(PriceApiDelegateImpl.class);
+
     @Autowired
     private IPriceService priceService;
 
@@ -25,11 +29,12 @@ public class PriceApiDelegateImpl implements PriceApiDelegate  {
             Price priceEntity = priceService.findLastPrice(date, Long.valueOf(productId), Long.valueOf(brandId));
             PriceDTO priceDTO = convertEntityToDTO(priceEntity);
             if(priceDTO==null) {
-                return (ResponseEntity<PriceDTO>) ResponseEntity.notFound();
-                //throw new PriceNotFoundException();
+                logger.info(Constants.NOT_FOUND_MESSAGE);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
             }
             return ResponseEntity.ok(priceDTO);
         } catch (Exception ex) {
+            logger.error("exception: " + ex.getMessage());
             return (ResponseEntity<PriceDTO>) ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
